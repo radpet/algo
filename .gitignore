@@ -2,3 +2,4 @@
 **.hi
 cmake-build-debug/
 .idea/
+**.rkt~
