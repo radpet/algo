@@ -88,6 +88,29 @@ public:
     }
 };
 
+class EmptyWalker : public NodeWalker {
+public:
+    void execute(Node *currentNode) {
+
+    }
+};
+
+class MaxLeafWalker : public NodeWalker {
+private:
+    int maxValue;
+public:
+    MaxLeafWalker(int initialValue) {
+        maxValue = initialValue;
+    }
+
+    void execute(Node *currentNode) {
+        maxValue = max(maxValue, currentNode->value);
+    }
+
+    int getMaxValue() const {
+        return maxValue;
+    }
+};
 
 class BTree {
 private:
@@ -121,11 +144,13 @@ private:
 
     }
 
-    void traverseInternal(Node *node, NodeWalker &walker) {
-        if (node == nullptr) return;
-        traverseInternal(node->left, walker);
-        traverseInternal(node->right, walker);
+    int traverseInternal(Node *node, NodeWalker &walker, int height) {
+        if (node == nullptr) return height;
+        int maxHeight = 0;
+        maxHeight = max(traverseInternal(node->left, walker, height + 1),
+                        traverseInternal(node->right, walker, height + 1));
         walker.execute(node);
+        return maxHeight;
     }
 
 public:
@@ -152,8 +177,8 @@ public:
         traverse(p);
     }
 
-    void traverse(NodeWalker &walker) {
-        traverseInternal(root, walker);
+    int traverse(NodeWalker &walker) {
+        return traverseInternal(root, walker, 0);
     }
 
     int count() {
@@ -180,6 +205,19 @@ public:
         return l.getCount();
     }
 
+    int height() {
+        EmptyWalker e;
+        return traverse(e);
+    }
+
+    int maxLeaf() {
+        // if root is null I don't care :)
+        MaxLeafWalker m(root->value);
+        traverse(m);
+        return m.getMaxValue();
+    }
+
+
 };
 
 bool isOdd(const int a) {
@@ -197,7 +235,6 @@ int main() {
     b.add(25);
 
 
-
     b.print();
     cout << endl;
     cout << "All node count: " << b.count() << endl;
@@ -205,4 +242,8 @@ int main() {
 
     cout << "Odd valued node count: " << b.searchCount(isOdd) << endl;
     cout << "Leaves count is: " << b.countLeaves() << endl;
+
+    cout << "Tree height is: " << b.height() << endl;
+
+    cout << "The max value of a leaf is: " << b.maxLeaf() << endl;
 }
