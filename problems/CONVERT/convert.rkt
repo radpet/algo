@@ -23,6 +23,7 @@
 ;(convert 124 10 5)
 ;(convert 124 10 6)
 ;(convert 120 10 9)
+;(convert 0 10 2)
 
 
   
