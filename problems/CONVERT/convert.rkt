@@ -1,14 +1,16 @@
 #lang racket
-
 (define (convert x from to)
-  (define (iter rem pos result)
-    (if ( = (quotient rem to) 0)
-        (+ (* (modulo rem to) pos) result)
-        (iter (quotient rem to) (* pos from) (+ (* (modulo rem to) pos) result))
-     )
-   )
+  (define (convert-helper x from to)
+    (define (iter rem pos result)
+      (if ( = (quotient rem to) 0)
+          (+ (* (modulo rem to) pos) result)
+          (iter (quotient rem to) (* pos from) (+ (* (modulo rem to) pos) result))
+          )
+      )
 
-  (iter x 1 0)
+    (iter x 1 0)
+    )
+ (convert-helper (convert-helper x from 10) 10 to)
 )
 
 ;(convert 111 2 10)
@@ -24,6 +26,16 @@
 ;(convert 124 10 6)
 ;(convert 120 10 9)
 ;(convert 0 10 2)
+;(displayln "")
+;(convert 521	10	2)
+;(convert 10	10	2)
+;(convert 10	10	3)
+;(convert 26	10	3)
+;(convert 26	10	4)
+;(convert 26	10	9)
+;(convert 26	7	9)
+;(convert 26	8	7)
+;(convert 26	9	7)
+;(convert 26	9	8)
+;(convert 26	9	9)
 
-
-  
