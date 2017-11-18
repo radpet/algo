@@ -42,6 +42,9 @@
 (define (sum-numbers str)
   (apply + (map to-num (map (λ(x) (map as-digit x) ) (extract-num (string->list str)) ) ) )
 )
-(sum-numbers "a123b2c56")
-(sum-numbers "a1b2c3")
-(sum-numbers "a1b2c3d4")
+;(sum-numbers "a123b2c56")
+;(sum-numbers "a1b2c3")
+;(sum-numbers "1a1bb2ccc3")
+;(sum-numbers "a1b2c3d4")
+
+
