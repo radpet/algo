@@ -21,5 +21,5 @@
   (λ(x) (iter list ( (car list) x) x) )
 )
 
-((maximize (list (λ (x) (- x 10)) (λ (x) (- x 5))) ) 5)
-((maximize (list (λ (x) (- x 10)) (λ (x) (- x 5)))) 9)
+;((maximize (list (λ (x) (- x 10)) (λ (x) (- x 5))) ) 5)
+;((maximize (list (λ (x) (- x 10)) (λ (x) (- x 5)))) 9)
