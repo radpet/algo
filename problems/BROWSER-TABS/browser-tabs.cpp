@@ -1,6 +1,6 @@
 #include<iostream>
 #include<string.h>
-#include<ctime>
+
 
 using namespace std;
 
@@ -10,24 +10,21 @@ private:
     long timestamp;
 
     long genTimestamp() {
-        time(&timestamp);
-        return timestamp;
+        timestamp = clock(); //too fast for time
     }
 
     void copyUrlInternal(const char *_url) {
-        url = new char[strlen(_url)];
-        url = strcpy(url, _url);
+        delete[] url;
+        int len = strlen(_url);
+        url = new char[len + 1];
+        strcpy(url, _url);
     }
 
 public:
-    TabData() : url(nullptr) {
+    TabData() {
+        url = nullptr;
         copyUrlInternal("about:blank");
-        timestamp = genTimestamp();
-    }
-
-    TabData(const char *_url) {
-        timestamp = genTimestamp();
-        copyUrlInternal(_url);
+        genTimestamp();
     }
 
     TabData(const TabData &other) {
@@ -36,14 +33,13 @@ public:
 
     TabData &operator=(const TabData &other) {
         if (this != &other) {
-            delete url;
             copyUrlInternal(other.url);
             timestamp = other.timestamp;
         }
     }
 
     ~TabData() {
-        delete url;
+        delete[] url;
     }
 
     void updateTimestamp() {
@@ -62,6 +58,30 @@ public:
         return url;
     }
 
+    static bool cmpByTimestamp(const TabData &one, const TabData &other) {
+        if (one.getTimestamp() == other.getTimestamp()) {
+            return strcmp(one.getUrl(), other.getUrl()) > 0;
+        }
+        return one.getTimestamp() > other.getTimestamp();
+    }
+
+    static bool cmpByURL(const TabData &one, const TabData &other) {
+        if (strcmp(one.getUrl(), other.getUrl()) == 0) {
+            return one.getTimestamp() > other.getTimestamp();
+        }
+
+        return strcmp(one.getUrl(), other.getUrl()) > 0;
+    }
+
+    static void swap(TabData &one, TabData &other) {
+        TabData tmp;
+        tmp.setUrl(one.getUrl());
+        tmp.timestamp = one.timestamp;
+
+        one = other;
+        other = tmp;
+    }
+
 };
 
 ostream &operator<<(ostream &out, const TabData &data) {
@@ -69,7 +89,7 @@ ostream &operator<<(ostream &out, const TabData &data) {
 }
 
 class Tab {
-private:
+
     Tab *next;
     Tab *prev;
     TabData data;
@@ -110,15 +130,34 @@ public:
         data.updateTimestamp();
     }
 
-    TabData &getTabData() {
+    void setTabData(const TabData &tabData) {
+        data = tabData;
+    }
+
+    TabData &getData() {
         return data;
     }
 };
 
+// no memory management here
 class Browser {
-
+private:
     Tab *root;
     Tab *current;
+
+    void sort(bool (*cmp)(const TabData &, const TabData &)) {
+        current = root;
+        for (Tab *i = root; i != nullptr; i = i->getNext()) {
+            for (Tab *j = root; j->hasNext(); j = j->getNext()) {
+                if (cmp(j->getData(), j->getNext()->getData())) {
+                    //swap
+                    TabData::swap(j->getData(), j->getNext()->getData());
+                }
+            }
+        }
+    }
+
+
 public:
 
     Browser() {
@@ -186,7 +225,7 @@ public:
             if (tmp == current) {
                 cout << "> ";
             }
-            cout << tmp->getTabData() << endl;
+            cout << tmp->getData() << endl;
             tmp = tmp->getNext();
         }
     }
@@ -200,13 +239,22 @@ public:
         }
     }
 
+    void sort(const char *by) {
+        if (strcmp(by, "URL") == 0) {
+            sort(TabData::cmpByURL);
+        }
+
+        if (strcmp(by, "TIME") == 0) {
+            sort(TabData::cmpByTimestamp);
+        }
+    }
 };
 
 void test1_1(Browser &browser) {
     browser.go("www.youtube.com/watch?v=dQw4w9WgXcQ");
     browser.insert("www.google.bg/search?q=google+plz+help+me+solve+my+data+structures+task");
     browser.insert("www.9gag.com/gag/aAV83g9/when-you-realise-today-is-the-homework-assignment-deadline");
-    browser.insert("www.en.wikipedia.org/wiki/Data_structure ");
+    browser.insert("www.en.wikipedia.org/wiki/Data_structure");
 
     // browser.print();
 
@@ -254,8 +302,38 @@ void test2() {
     cout << endl;
 }
 
+void test3_1(Browser &browser) {
+    browser.go("www.youtube.com/watch?v=dQw4w9WgXcQ");
+    browser.insert("www.en.wikipedia.org/wiki/Data_structure");
+    browser.insert("www.wikihow.com/Deal-With-Tons-of-Homework");
+    browser.insert("www.susi.uni-sofia.bg");
+
+    browser.sort("URL");
+    browser.print();
+}
+
+void test3_2(Browser &browser) {
+    browser.sort("TIME");
+    browser.print();
+}
+
+
+void test3() {
+    cout << "########## Test 3 #########" << endl;
+    Browser browser;
+    cout << "[Test 3.1]" << endl;
+    test3_1(browser);
+    cout << "[Test 3.2]" << endl;
+    test3_2(browser);
+
+    cout << endl;
+}
 
 int main() {
     test1();
     test2();
+
+    test3();
+
+
 }
