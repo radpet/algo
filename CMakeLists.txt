@@ -5,4 +5,6 @@ add_executable(B-TREE problems/B-TREE/b-tree.cpp)
 
 add_executable(Stack problems/STACK/stack.cpp)
 
+add_executable(MONOM problems/MONOM/MONOM.cpp)
+
 add_executable(BROWSER-TABS problems/BROWSER-TABS/browser-tabs)
