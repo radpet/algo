@@ -28,6 +28,8 @@ public:
     }
 
     TabData(const TabData &other) {
+        url = nullptr;
+        timestamp = genTimestamp();
         *this = other;
     }
 
@@ -74,9 +76,7 @@ public:
     }
 
     static void swap(TabData &one, TabData &other) {
-        TabData tmp;
-        tmp.setUrl(one.getUrl());
-        tmp.timestamp = one.timestamp;
+        TabData tmp = one;
 
         one = other;
         other = tmp;
@@ -156,7 +156,6 @@ private:
             }
         }
     }
-
 
 public:
 
@@ -334,6 +333,4 @@ int main() {
     test2();
 
     test3();
-
-
 }
