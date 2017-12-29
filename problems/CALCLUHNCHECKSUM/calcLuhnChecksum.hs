@@ -16,7 +16,9 @@ solve lst = (sum_list (map( \x -> if ( (snd x) `mod` 2 ) == 0
   else (fst x) )
   (zip lst [1..]) ) * 9) `mod` 10
 
+calcLuhnChecksum :: Int -> Int
+calcLuhnChecksum n = solve (to_list n)
 
 main:: IO()
 main = do
-  print(solve(to_list  7992739871))
+  print(calcLuhnChecksum 7992739871)
