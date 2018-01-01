@@ -8,3 +8,5 @@ add_executable(Stack problems/STACK/stack.cpp)
 add_executable(MONOM problems/MONOM/MONOM.cpp)
 
 add_executable(BROWSER-TABS problems/BROWSER-TABS/browser-tabs)
+
+add_executable(CITY-MAP problems/CITYMAP/main)
