@@ -1,4 +1,5 @@
 #include <vector>
+#include <utility>
 #include <unordered_map>
 
 struct Edge {
@@ -53,6 +54,7 @@ private:
         return used[to];
     }
 
+
 public:
     void addEdge(const std::string from, const std::string to, int cost) {
         //there was no such node so far as starting point
@@ -68,6 +70,26 @@ public:
 
     bool hasPath(const std::string from, const std::string to) {
         return hasPathInternal(nameToId[from], nameToId[to]);
+    }
+
+    bool hasEulerPath() {
+
+    }
+
+    std::vector<std::pair<std::string, std::string>> findDeadEnds() {
+
+        std::vector<std::pair<std::string, std::string>> deadEnds;
+
+        for (int i = 0; i < G.size(); i++) { // this is the id of each node
+            for (Edge &edge : G[i]) {
+                if (G[edge.to].size() == 0) { // the end of the current edge has no connected edges
+                    deadEnds.push_back(std::make_pair(idToName[i], idToName[edge.to]));
+                }
+            }
+        }
+
+        return deadEnds;
+
     }
 };
 
