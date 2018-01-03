@@ -9,4 +9,6 @@ add_executable(MONOM problems/MONOM/MONOM.cpp)
 
 add_executable(BROWSER-TABS problems/BROWSER-TABS/browser-tabs)
 
+add_executable(HEAP problems/HEAP/heap)
+
 add_executable(CITY-MAP problems/CITYMAP/main)
