@@ -11,4 +11,6 @@ add_executable(BROWSER-TABS problems/BROWSER-TABS/browser-tabs)
 
 add_executable(HEAP problems/HEAP/heap)
 
+add_executable(LINKED-LIST problems/LINKED-LIST/linked-list.cpp)
+
 add_executable(CITY-MAP problems/CITYMAP/main)
