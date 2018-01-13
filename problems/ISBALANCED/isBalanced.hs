@@ -29,7 +29,7 @@ countDepth (Node _ l r) k = max (countDepth l (k+1) ) (countDepth r (k+1))
 countDepth Empty k = k
 
 isBalanced :: Tree Char -> Int-> Bool
-isBalanced (Node _ l r) k = ( ( (countDepth l 0) - (countDepth r 0) ) <= k) && (isBalanced l k) && (isBalanced r k)
+isBalanced (Node _ l r) k = ( (abs ( (countDepth l 0) - (countDepth r 0) )) <= k) && (isBalanced l k) && (isBalanced r k)
 isBalanced Empty k = True
 
 main :: IO()
