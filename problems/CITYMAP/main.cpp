@@ -199,7 +199,7 @@ void testShortestPath3() {
 
 void testTop3ShortestPaths1() {
     cout << "###############" << endl;
-    cout << "Test for shortest path 1" << endl;
+    cout << "Test for top 3 shortest path 1" << endl;
     Graph g;
 
     g.addEdge("Sofia", "Borovec", 75);
@@ -324,6 +324,50 @@ void testTop3ShortestPaths3() {
     cout << "###############" << endl;
 }
 
+void testTop3ShortestPathsClosed() {
+    cout << "###############" << endl;
+    cout << "Test for top 3 shortest path with closed vertex" << endl;
+    Graph g;
+
+    g.addEdge("Sofia", "Borovec", 75);
+    g.addEdge("Borovec", "Samokov", 5);
+    g.addEdge("Samokov", "Sofia", 65);
+    g.addEdge("Samokov", "Bistrica", 60);
+    g.addEdge("Bistrica", "Sofia", 3);
+    g.addEdge("Bistrica", "Burgas", 450);
+    g.addEdge("Samokov", "Burgas", 470);
+    g.addEdge("Burgas", "Bistrica", 450);
+    g.addEdge("Burgas", "Sofia", 400);
+
+    vector<string> closed = {"Bistrica"};
+    vector<vector<string>> shortestPaths = g.findTop3ShortestPaths("Borovec", "Sofia", closed);
+
+    vector<vector<string>> testAns = {{"Borovec", "Samokov", "Sofia"},
+                                      {"Borovec", "Samokov", "Burgas", "Sofia"},
+                                      {}};
+    bool passed = true;
+    for (int i = 0; i < shortestPaths.size(); i++) {
+        passed = passed && shortestPaths[i] == testAns[i];
+    }
+
+    if (passed) {
+        cout << "passed" << endl;
+    } else {
+        cout << "failed" << endl;
+        for (int i = 0; i < shortestPaths.size(); i++) {
+            if (shortestPaths[i].size() == 0) {
+                cout << "NO PATH";
+            }
+            for (auto v: shortestPaths[i]) {
+                cout << v << " ";
+            }
+            cout << endl;
+        }
+        cout << endl;
+    }
+    cout << "###############" << endl;
+}
+
 int main() {
 //    testAddEdge();
 //    testHasPath();
@@ -335,7 +379,8 @@ int main() {
 //    testShortestPath3();
 //    testTop3ShortestPaths1();
 //    testTop3ShortestPaths2();
-    testTop3ShortestPaths3();
+//    testTop3ShortestPaths3();
+//    testTop3ShortestPathsClosed();
     return 0;
 }
 

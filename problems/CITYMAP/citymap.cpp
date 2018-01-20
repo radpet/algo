@@ -66,10 +66,10 @@ private:
         return used[to];
     }
 
-    static std::vector<std::vector<int>>
-    findShortestPath(int from, int to, std::vector<std::vector<Edge>> &G, std::set<int> forbiddenVertex) {
-        int k = 3;
-        int count[G.size()];
+    std::vector<std::vector<int>>
+    findShortestPath(int from, int to, std::set<int> forbiddenVertex) {
+        std::vector<int> count;
+        count.resize(G.size());
 
         for (int i = 0; i < G.size(); i++) {
             count[i] = 0;
@@ -78,10 +78,8 @@ private:
         std::priority_queue<std::pair<Edge, std::vector<int>>, std::vector<std::pair<Edge, std::vector<int>>>, EdgeAndPathCompare> Q;
         std::vector<int> a = {from};
         Q.push(std::make_pair(Edge(from, 0), a));
-        bool found = false;
 
         std::vector<std::vector<int>> paths;
-        paths.reserve(k);
 
         while (!Q.empty()) {
             std::pair<Edge, std::vector<int>> current = Q.top();
@@ -89,7 +87,7 @@ private:
             if (forbiddenVertex.count(current.first.to)) {
                 continue;
             }
-            if (count[current.first.to] >= k) {
+            if (count[current.first.to] >= 3) {
                 break;
             }
             count[current.first.to] += 1;
@@ -105,6 +103,9 @@ private:
                 Q.push(std::make_pair(Edge(edge.to, current.first.cost + edge.cost), newPath));
             }
         }
+        while (paths.size() < 3) {
+            paths.push_back({});
+        }
         return paths;
     }
 
@@ -113,6 +114,7 @@ private:
         for (int vertex:ids) {
             result.push_back(idToName[vertex]);
         }
+
         return result;
     }
 
@@ -199,33 +201,41 @@ public:
     }
 
     std::vector<std::string> findShortestPath(const std::string from, const std::string end) {
-        int fromIndex = nameToId[from];
-        int endIndex = nameToId[end];
-
-        std::vector<int> path = findShortestPath(fromIndex, endIndex, G, {})[0];
-
-        return transformIdToName(path);
-    }
-
-    std::vector<std::string>
-    findShortestPath(const std::string from, const std::string end, std::vector<std::string> closed) {
-        int fromIndex = nameToId[from];
-        int endIndex = nameToId[end];
-
-        std::set<int> forbiddenVertex = {};
-
-        for (std::string closedV: closed) {
-            forbiddenVertex.insert(nameToId[closedV]);
+        if (!nameToId.count(from) || !nameToId.count(end)) {
+            return {};
         }
+        int fromIndex = nameToId[from];
+        int endIndex = nameToId[end];
 
-        std::vector<int> path = findShortestPath(fromIndex, endIndex, G, forbiddenVertex)[0];
+        std::vector<int> path = findShortestPath(fromIndex, endIndex, {})[0];
 
         return transformIdToName(path);
     }
 
     std::vector<std::vector<std::string>> findTop3ShortestPaths(const std::string from, const std::string end) {
+        if (!nameToId.count(from) || !nameToId.count(end)) {
+            return {};
+        }
+        std::vector<std::vector<int>> shortest = findShortestPath(nameToId[from], nameToId[end], {});
+        std::vector<std::vector<std::string>> ans;
+        for (auto path : shortest) {
+            ans.push_back(transformIdToName(path));
+        }
+        return ans;
+    }
+
+    std::vector<std::vector<std::string>>
+    findTop3ShortestPaths(const std::string from, const std::string end, std::vector<std::string> closedList) {
+        if (!nameToId.count(from) || !nameToId.count(end)) {
+            return {};
+        }
         std::set<int> forbiddenVertex = {};
-        std::vector<std::vector<int>> shortest = findShortestPath(nameToId[from], nameToId[end], G, {});
+        for (std::string closed: closedList) {
+            if (nameToId.count(closed)) {
+                forbiddenVertex.insert(nameToId[closed]);
+            }
+        }
+        std::vector<std::vector<int>> shortest = findShortestPath(nameToId[from], nameToId[end], forbiddenVertex);
         std::vector<std::vector<std::string>> ans;
         for (auto path : shortest) {
             ans.push_back(transformIdToName(path));
