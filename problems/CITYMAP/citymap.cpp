@@ -17,9 +17,11 @@ struct Edge {
     Edge(int _to, int _cost) : to(_to), cost(_cost) {
 
     }
+};
 
-    bool operator()(Edge a, Edge b) {
-        return a.cost > b.cost;
+struct EdgeAndPathCompare {
+    bool operator()(std::pair<Edge, std::vector<int>> a, std::pair<Edge, std::vector<int>> b) {
+        return a.first.cost > b.first.cost;
     }
 };
 
@@ -64,55 +66,46 @@ private:
         return used[to];
     }
 
-    static std::vector<int>
+    static std::vector<std::vector<int>>
     findShortestPath(int from, int to, std::vector<std::vector<Edge>> &G, std::set<int> forbiddenVertex) {
-
-        int dist[G.size()];
-        int pred[G.size()];
+        int k = 3;
+        int count[G.size()];
 
         for (int i = 0; i < G.size(); i++) {
-            dist[i] = 1 << 30;
-            pred[i] = i;
+            count[i] = 0;
         }
-        std::priority_queue<Edge, std::vector<Edge>, Edge> Q;
 
-        Q.push(Edge(from, 0));
+        std::priority_queue<std::pair<Edge, std::vector<int>>, std::vector<std::pair<Edge, std::vector<int>>>, EdgeAndPathCompare> Q;
+        std::vector<int> a = {from};
+        Q.push(std::make_pair(Edge(from, 0), a));
         bool found = false;
 
+        std::vector<std::vector<int>> paths;
+        paths.reserve(k);
+
         while (!Q.empty()) {
-            Edge current = Q.top();
+            std::pair<Edge, std::vector<int>> current = Q.top();
             Q.pop();
-            if (forbiddenVertex.count(current.to)) {
+            if (forbiddenVertex.count(current.first.to)) {
                 continue;
             }
-            if (current.to == to) {
-                found = true;
+            if (count[current.first.to] >= k) {
                 break;
             }
+            count[current.first.to] += 1;
+            if (current.first.to == to) {
+                paths.push_back(current.second);
+                continue;
+            }
 
-            for (Edge &edge: G[current.to]) {
-                if (dist[edge.to] > current.cost + edge.cost) {
-                    pred[edge.to] = current.to;
-                    dist[edge.to] = current.cost + edge.cost;
-                    Q.push(Edge(edge.to, current.cost + edge.cost));
-                }
-
+            for (Edge &edge: G[current.first.to]) {
+                // at each step I will store the path too
+                std::vector<int> newPath = current.second;
+                newPath.push_back(edge.to);
+                Q.push(std::make_pair(Edge(edge.to, current.first.cost + edge.cost), newPath));
             }
         }
-
-
-        std::vector<int> result;
-        if (found) {
-            int start = to;
-            while (start != from) {
-                result.push_back(start);
-                start = pred[start];
-            }
-            result.push_back(from);
-            std::reverse(std::begin(result), std::end(result));
-        }
-
-        return result;
+        return paths;
     }
 
     std::vector<std::string> transformIdToName(std::vector<int> &ids) {
@@ -209,7 +202,7 @@ public:
         int fromIndex = nameToId[from];
         int endIndex = nameToId[end];
 
-        std::vector<int> path = findShortestPath(fromIndex, endIndex, G, {});
+        std::vector<int> path = findShortestPath(fromIndex, endIndex, G, {})[0];
 
         return transformIdToName(path);
     }
@@ -225,60 +218,19 @@ public:
             forbiddenVertex.insert(nameToId[closedV]);
         }
 
-        std::vector<int> path = findShortestPath(fromIndex, endIndex, G, forbiddenVertex);
+        std::vector<int> path = findShortestPath(fromIndex, endIndex, G, forbiddenVertex)[0];
 
         return transformIdToName(path);
     }
 
     std::vector<std::vector<std::string>> findTop3ShortestPaths(const std::string from, const std::string end) {
         std::set<int> forbiddenVertex = {};
-        std::vector<int> first = findShortestPath(nameToId[from], nameToId[end], G, {});
-        std::vector<std::vector<Edge>> g = G;
-
-        for (int i = 0; i < first.size() - 1; i++) {
-
-            std::vector<Edge> currentNeigh = g[first[i]];
-            int delPos = -1;
-            for (int j = 0; j < currentNeigh.size(); j++) {
-                if (currentNeigh[j].to == first[i + 1]) {
-                    delPos = j;
-                    break;
-                }
-            }
-
-            if (delPos != -1) {
-                currentNeigh.erase(currentNeigh.begin() + delPos);
-            }
-
-            g[first[i]] = currentNeigh;
+        std::vector<std::vector<int>> shortest = findShortestPath(nameToId[from], nameToId[end], G, {});
+        std::vector<std::vector<std::string>> ans;
+        for (auto path : shortest) {
+            ans.push_back(transformIdToName(path));
         }
-
-        std::vector<int> second = findShortestPath(nameToId[from], nameToId[end], g, {});
-        if (second.size() <= 2) {
-            return {transformIdToName(first), transformIdToName(second), {}};
-        }
-
-        for (int i = 0; i < second.size() - 1; i++) {
-            std::vector<Edge> currentNeigh = g[second[i]];
-            int delPos = -1;
-            for (int j = 0; j < currentNeigh.size(); j++) {
-                if (currentNeigh[j].to == second[i + 1]) {
-                    delPos = j;
-                    break;
-                }
-            }
-
-            if (delPos != -1) {
-                currentNeigh.erase(currentNeigh.begin() + delPos);
-            }
-
-            g[second[i]] = currentNeigh;
-        }
-
-        std::vector<int> third = findShortestPath(nameToId[from], nameToId[end], g, {});
-
-        return {transformIdToName(first), transformIdToName(second), transformIdToName(third)};
-
+        return ans;
     }
 
 

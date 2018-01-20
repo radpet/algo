@@ -204,11 +204,9 @@ void testTop3ShortestPaths1() {
 
     g.addEdge("Sofia", "Borovec", 75);
     g.addEdge("Borovec", "Samokov", 5);
-    g.addEdge("Samokov", "Sofia", 65);
     g.addEdge("Samokov", "Bistrica", 60);
     g.addEdge("Bistrica", "Sofia", 3);
     g.addEdge("Bistrica", "Burgas", 450);
-    g.addEdge("Burgas", "Bistrica", 450);
 
     vector<vector<string>> shortestPaths = g.findTop3ShortestPaths("Borovec", "Sofia");
 
@@ -240,7 +238,7 @@ void testTop3ShortestPaths1() {
 
 void testTop3ShortestPaths2() {
     cout << "###############" << endl;
-    cout << "Test for shortest path 2" << endl;
+    cout << "Test for top 3 shortest path 2" << endl;
     Graph g;
 
     g.addEdge("Sofia", "Borovec", 75);
@@ -250,13 +248,12 @@ void testTop3ShortestPaths2() {
     g.addEdge("Bistrica", "Sofia", 3);
     g.addEdge("Bistrica", "Burgas", 450);
     g.addEdge("Burgas", "Bistrica", 450);
-    g.addEdge("Borovec", "Sofia", 500);
 
     vector<vector<string>> shortestPaths = g.findTop3ShortestPaths("Borovec", "Sofia");
 
     vector<vector<string>> testAns = {{"Borovec", "Samokov", "Bistrica", "Sofia"},
-                                      {"Borovec", "Sofia"},
-                                      {}};
+                                      {"Borovec", "Samokov", "Sofia"},
+                                      {"Borovec", "Samokov", "Bistrica", "Burgas", "Bistrica", "Sofia"}};
     bool passed = true;
     for (int i = 0; i < shortestPaths.size(); i++) {
         passed = passed && shortestPaths[i] == testAns[i];
@@ -283,7 +280,7 @@ void testTop3ShortestPaths2() {
 
 void testTop3ShortestPaths3() {
     cout << "###############" << endl;
-    cout << "Test for shortest path 3" << endl;
+    cout << "Test for top 3 shortest path 3" << endl;
     Graph g;
 
     g.addEdge("Sofia", "Borovec", 75);
@@ -301,9 +298,9 @@ void testTop3ShortestPaths3() {
 
     vector<vector<string>> shortestPaths = g.findTop3ShortestPaths("Borovec", "Sofia");
 
-    vector<vector<string>> testAns = {{"Borovec", "Mars",    "Burgas",   "Luna", "Sofia"},
-                                      {"Borovec", "Samokov", "Sofia"},
-                                      {"Borovec", "Samokov", "Bistrica", "Sofia"}};
+    vector<vector<string>> testAns = {{"Borovec", "Mars", "Burgas",  "Luna",     "Sofia"},
+                                      {"Borovec", "Mars", "Samokov", "Bistrica", "Sofia"},
+                                      {"Borovec", "Mars", "Samokov", "Sofia"}};
     bool passed = true;
     for (int i = 0; i < shortestPaths.size(); i++) {
         passed = passed && shortestPaths[i] == testAns[i];
