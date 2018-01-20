@@ -368,6 +368,29 @@ void testTop3ShortestPathsClosed() {
     cout << "###############" << endl;
 }
 
+void testIsEulerian() {
+    cout << "###############" << endl;
+    cout << "Test for is eulerian" << endl;
+    Graph g;
+
+    g.addEdge("Sofia", "Burgas", 0);
+    g.addEdge("Burgas", "Varna", 0);
+    g.addEdge("Varna", "Sofia", 0);
+
+    cout << g.isEulerian() << " should be 1" << endl;
+
+    vector<string> path = g.findEulerianCycle();
+    for (string vertex: path) {
+        cout << vertex << " ";
+    }
+    cout << endl;
+
+    g.addEdge("Sofia", "Pleven", 0);
+    cout << g.isEulerian() << " should be 0" << endl;
+    cout << "###############" << endl;
+
+}
+
 int main() {
 //    testAddEdge();
 //    testHasPath();
@@ -381,6 +404,7 @@ int main() {
 //    testTop3ShortestPaths2();
 //    testTop3ShortestPaths3();
 //    testTop3ShortestPathsClosed();
+//    testIsEulerian();
     return 0;
 }
 

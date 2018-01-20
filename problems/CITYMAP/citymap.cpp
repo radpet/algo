@@ -5,6 +5,9 @@
 #include <set>
 #include <algorithm>
 
+/**
+ * Holds where the edge is pointing and its cost
+ */
 struct Edge {
 
     int to;
@@ -19,6 +22,10 @@ struct Edge {
     }
 };
 
+/**
+ * Used in as comparator class for the priority queue. It orders the pairs by the cost of the path
+ * the path is list stored on second position.
+ */
 struct EdgeAndPathCompare {
     bool operator()(std::pair<Edge, std::vector<int>> a, std::pair<Edge, std::vector<int>> b) {
         return a.first.cost > b.first.cost;
@@ -30,7 +37,10 @@ private:
     // a entry for each node holding vector for edges starting from it
     std::vector<std::vector<Edge> > G;
 
+    // maps vertex name to int
     std::unordered_map<std::string, int> nameToId;
+
+    // reverse map in order to display the name of a vertex
     std::unordered_map<int, std::string> idToName;
 
     void tryAddNewNode(const std::string name) {
@@ -66,6 +76,13 @@ private:
         return used[to];
     }
 
+    /**
+     * Runs modified dijkstra in order to retrieve the top 3 shortest paths.
+     * @param from  the start vertex
+     * @param to the end vertex
+     * @param forbiddenVertex set containing vertex that should not be part of the path
+     * @return list of paths sorted in shortest order
+     */
     std::vector<std::vector<int>>
     findShortestPath(int from, int to, std::set<int> forbiddenVertex) {
         std::vector<int> count;
@@ -118,6 +135,27 @@ private:
         return result;
     }
 
+    bool findEulerianCycleInternal(std::vector<int> &path, int current, bool **&used,
+                                   int remaining) {
+        if (remaining == 0) {
+            return true;
+        }
+
+        for (Edge &edge: G[current]) {
+            if (!used[current][edge.to]) {
+                path.push_back(edge.to);
+                used[current][edge.to] = true;
+                if (findEulerianCycleInternal(path, edge.to, used, remaining - 1)) {
+                    return true;
+                }
+                used[current][edge.to] = false;
+                path.pop_back();
+            }
+        }
+
+        return false;
+    }
+
 public:
     void addEdge(const std::string from, const std::string to, int cost) {
         //there was no such node so far as starting point
@@ -137,6 +175,11 @@ public:
         return hasPathInternal(nameToId[from], nameToId[to]);
     }
 
+    /**
+     * Runs bfs from the start vertex and finds if there is cycle including this vertex as beginning.
+     * @param start the start vertex
+     * @return true if there is path start->p1->p2->..->start, false otherwise
+     */
     bool hasCycle(const std::string start) {
         if (nameToId.count(start) == 0) {
             return false;
@@ -168,6 +211,11 @@ public:
         return false;
     }
 
+    /**
+     * Runs dfs in order to check if there is path from the start to all other vertices in the graph.
+     * @param from the start vertex
+     * @return true if all other nodes can be visited from the from start
+     */
     bool hasPathToAllOthers(const std::string from) {
         if (nameToId.count(from) == 0) {
             return false;
@@ -176,11 +224,20 @@ public:
 
         bool pathToAll = true;
 
+        bool *used = new bool[G.size()];
+        for (int i = 0; i < G.size(); i++) {
+            used[i] = false;
+        }
+
+        dfs(nameToId[from], used);
+
         for (int i = 0; i < G.size(); i++) {
             if (i != fromIndex) {
-                pathToAll = pathToAll && hasPathInternal(fromIndex, i);
+                pathToAll = pathToAll && used[i];
             }
         }
+
+        delete[] used;
 
         return pathToAll;
     }
@@ -243,6 +300,63 @@ public:
         return ans;
     }
 
+    std::vector<std::string> findEulerianCycle() {
+        if (!isEulerian()) {
+            return {};
+        }
+
+        int edgeCount = 0;
+        for (int i = 0; i < G.size(); i++) {
+            edgeCount += G[i].size();
+        }
+
+        std::vector<int> path;
+
+        bool **used = new bool *[G.size()];
+
+        for (int i = 0; i < G.size(); i++) {
+            used[i] = new bool[G.size()];
+            for (int j = 0; j < G.size(); j++) {
+                used[i][j] = 0;
+            }
+        }
+
+        findEulerianCycleInternal(path, 0, used, edgeCount);
+
+        for (int i = 0; i < G.size(); i++) {
+            delete[] used[i];
+        }
+        delete[] used;
+        return transformIdToName(path);
+    }
+
+    bool isEulerian() {
+        int *inDegree = new int[G.size()];
+
+        for (int i = 0; i < G.size(); i++) {
+            inDegree[i] = 0;
+        }
+
+        for (int i = 0; i < G.size(); i++) {
+
+            for (Edge &edge: G[i]) {
+                inDegree[edge.to] += 1;
+            }
+        }
+
+        bool eulerian = true;
+
+        for (int i = 0; i < G.size(); i++) {
+            if (G[i].size() != inDegree[i]) {
+                eulerian = false;
+                break;
+            }
+        }
+
+        delete[] inDegree;
+
+        return eulerian;
+    }
 
 };
 
