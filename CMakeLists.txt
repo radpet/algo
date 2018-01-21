@@ -16,3 +16,5 @@ add_executable(LINKED-LIST problems/LINKED-LIST/linked-list.cpp)
 add_executable(CITY-MAP problems/CITYMAP/main)
 
 add_executable(KNIGHT-TOUR problems/KNIGHT-TOUR/knight-tour.cpp)
+
+add_executable(LONGEST-PATH problems/LONGEST-PATH/longest-path.cpp)
