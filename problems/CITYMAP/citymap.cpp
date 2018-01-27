@@ -126,15 +126,28 @@ private:
         return paths;
     }
 
-    std::vector<std::string> transformIdToName(std::vector<int> &ids) {
+    /**
+     * Utility function in order to map list of node ids to its name.
+     * @param ids  the list of node ids
+     * @return List of node names
+     */
+    std::vector<std::string> transformIdToName(const std::vector<int> &ids) const {
         std::vector<std::string> result;
         for (int vertex:ids) {
-            result.push_back(idToName[vertex]);
+            result.push_back(idToName.at(vertex));
         }
 
         return result;
     }
 
+    /**
+     * Use backtrack in order to find a path forming eulerian cycle.
+     * @param path  the current path at the given step
+     * @param current the current node
+     * @param used matrix holding whether an edge is used
+     * @param remaining the remaining edge count
+     * @return true if path was found and false otherwise
+     */
     bool findEulerianCycleInternal(std::vector<int> &path, int current, bool **&used,
                                    int remaining) {
         if (remaining == 0) {
@@ -157,6 +170,12 @@ private:
     }
 
 public:
+    /**
+     * Adds edge (path) from one node to another
+     * @param from the name of the from node
+     * @param to the name of the destination node
+     * @param cost the cost of using the edge
+     */
     void addEdge(const std::string from, const std::string to, int cost) {
         //there was no such node so far as starting point
         tryAddNewNode(from);
@@ -168,11 +187,17 @@ public:
 
     }
 
+    /**
+     * Checks wether there is path between two nodes
+     * @param from the start node
+     * @param to the end node
+     * @return true if there is path and false otherwise
+     */
     bool hasPath(const std::string from, const std::string to) {
         if (!nameToId.count(from) || !nameToId.count(to)) {
             return false;
         }
-        return hasPathInternal(nameToId[from], nameToId[to]);
+        return hasPathInternal(nameToId.at(from), nameToId.at(to));
     }
 
     /**
@@ -242,6 +267,10 @@ public:
         return pathToAll;
     }
 
+    /**
+     * Find the edges that ends in node that has no edges starting from it.
+     * @return list of edges in format (name of start node, name of end node)
+     */
     std::vector<std::pair<std::string, std::string>> findDeadEnds() {
 
         std::vector<std::pair<std::string, std::string>> deadEnds;
@@ -257,6 +286,12 @@ public:
         return deadEnds;
     }
 
+    /**
+     * Finds the shortest path (with lowest cost) from start node to end node.
+     * @param from the start node
+     * @param end the end node
+     * @return the path
+     */
     std::vector<std::string> findShortestPath(const std::string from, const std::string end) {
         if (!nameToId.count(from) || !nameToId.count(end)) {
             return {};
@@ -269,6 +304,25 @@ public:
         return transformIdToName(path);
     }
 
+    /**
+     * Finds the shortest path between two nodes that does not include nodes in closed
+     * @param from the start node
+     * @param end  the end node
+     * @param closed list of nodes that should not be in path
+     * @return the path
+     */
+    std::vector<std::string>
+    findShortestPath(const std::string from, const std::string end, std::vector<std::string> &closed) {
+
+        return findTop3ShortestPaths(from, end, closed)[0];
+    }
+
+    /**
+     * Finds the top 3 shortest paths from start node to end node.
+     * @param from the start node
+     * @param end the end node
+     * @return list of paths
+     */
     std::vector<std::vector<std::string>> findTop3ShortestPaths(const std::string from, const std::string end) {
         if (!nameToId.count(from) || !nameToId.count(end)) {
             return {};
@@ -281,8 +335,15 @@ public:
         return ans;
     }
 
+    /**
+     * Finds the top 3 shortest paths that does not include nodes inside closedList.
+     * @param from the start node
+     * @param end the end node
+     * @param closedList list of nodes that should not be used in the path
+     * @return list of paths
+     */
     std::vector<std::vector<std::string>>
-    findTop3ShortestPaths(const std::string from, const std::string end, std::vector<std::string> closedList) {
+    findTop3ShortestPaths(const std::string from, const std::string end, std::vector<std::string> &closedList) {
         if (!nameToId.count(from) || !nameToId.count(end)) {
             return {};
         }
@@ -300,6 +361,10 @@ public:
         return ans;
     }
 
+    /**
+     * Finds if there is eulerian cycle in the graph
+     * @return list of nodes forming the cycle (the path)
+     */
     std::vector<std::string> findEulerianCycle() {
         if (!isEulerian()) {
             return {};
@@ -330,6 +395,10 @@ public:
         return transformIdToName(path);
     }
 
+    /**
+     * Check if the graph can have eulerian cycle at all.
+     * @return true if there is eulerian cycle somewhere and false if not
+     */
     bool isEulerian() {
         int *inDegree = new int[G.size()];
 
@@ -358,5 +427,17 @@ public:
         return eulerian;
     }
 
-};
+    std::vector<std::string> getNeighbours(std::string node) const {
+        if (nameToId.count(node) == 0) {
+            return {};
+        }
+        int nodeId = nameToId.at(node);
+        std::vector<int> neighbours;
+        for (Edge edge: G.at(nodeId)) {
+            neighbours.push_back(edge.to);
+        }
 
+        return transformIdToName(neighbours);
+    }
+
+};

@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cstring>
 #include "citymap.cpp"
 
 using namespace std;
@@ -7,7 +8,7 @@ using namespace std;
  * The city map is represented as a weighted undirected graph.
  * The roads are edges and each crossroad is a vertex (node).
  * In order to simplify the understanding of the following code I tried
- * to name everything with its abstract (math) name.
+ * to name everything with its literature name.
  */
 
 
@@ -391,7 +392,131 @@ void testIsEulerian() {
 
 }
 
-int main() {
+class Executor {
+private:
+    Graph *graph;
+    string current;
+    vector<string> closed;
+
+    void printPath(vector<string> &path) {
+        for (string node: path) {
+            cout << node << " ";
+        }
+        cout << endl;
+    }
+
+public:
+    Executor() {
+        current = "";
+    }
+
+    Executor(Graph *g) {
+        graph = g;
+        current = "";
+    }
+
+    void execute(string command) {
+        cout << "Received " << command << endl;
+        if (command.compare("location") == 0) {
+            cout << current << endl;
+        } else if (command.compare("change") == 0) {
+            string param;
+            cin.get();
+            cin >> param;
+            current = param;
+        } else if (command.compare("neighbours") == 0) {
+            vector<string> neighbours = graph->getNeighbours(current);
+            execute("location");
+            printPath(neighbours); // neighbours look like path
+        } else if (command.compare("move") == 0) {
+            string param;
+            cin.get();
+            cin >> param;
+            if (!graph->hasPath(current, param)) {
+                cout << "No path between " << current << " and " << param << endl;
+            } else {
+                vector<string> path = graph->findShortestPath(current, param, closed);
+                printPath(path);
+                current = param;
+            }
+
+        } else if (command.compare("close") == 0) {
+            string param;
+            cin.get();
+            cin >> param;
+            closed.push_back(param);
+
+        } else if (command.compare("open") == 0) {
+            string param;
+            cin.get();
+            cin >> param;
+            int index = -1;
+            for (int i = 0; i < closed.size(); i++) {
+                if (param.compare(closed[i]) == 0) {
+                    index = i;
+                    break;
+                }
+            }
+            if (index != -1) {
+                closed.erase(closed.begin() + index);
+            }
+        } else if (command.compare("closed") == 0) {
+            printPath(closed);//closed again has the same struct as a path
+        } else if (command.compare("tour") == 0) {
+            if (graph->isEulerian()) {
+                vector<string> path = graph->findEulerianCycle();//not really sure if the cycle should start with the current node
+                printPath(path);
+            } else {
+                cout << "Sorry cannot do it";
+            }
+        } else {
+            cout << "Invalid command" << endl;
+        }
+    }
+};
+
+class Cli {
+private:
+    Executor *executor;
+public:
+    Cli() {
+        executor = new Executor();
+    }
+
+    Cli(Graph *g) {
+        executor = new Executor(g);
+    }
+
+    ~Cli() {
+        delete executor;
+    }
+
+    void readCommand() {
+        string cmd;
+        cin >> cmd;
+        executor->execute(cmd);
+    }
+};
+
+void runInInteraction() {
+    cout << "Interactive mode" << endl;
+    Graph g;
+    g.addEdge("Sofia", "Borovec", 75);
+    g.addEdge("Borovec", "Samokov", 5);
+    g.addEdge("Samokov", "Sofia", 65);
+    g.addEdge("Samokov", "Bistrica", 60);
+    g.addEdge("Bistrica", "Sofia", 3);
+    g.addEdge("Bistrica", "Burgas", 450);
+    g.addEdge("Samokov", "Burgas", 470);
+    g.addEdge("Burgas", "Bistrica", 450);
+    g.addEdge("Burgas", "Sofia", 400);
+    Cli cli(&g);
+    while (true) {
+        cli.readCommand();
+    }
+}
+
+int main(int argc, char *argv[]) {
 //    testAddEdge();
 //    testHasPath();
 //    testDeadEnds();
@@ -405,6 +530,14 @@ int main() {
 //    testTop3ShortestPaths3();
 //    testTop3ShortestPathsClosed();
 //    testIsEulerian();
+
+    if (argc > 0) {
+        for (int i = 1; i < argc; i++) {
+            if (strcmp(argv[i], "-i") == 0) {
+                runInInteraction();
+            }
+        }
+    }
     return 0;
 }
 
