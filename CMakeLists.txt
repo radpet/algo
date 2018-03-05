@@ -21,3 +21,4 @@ add_executable(LONGEST-PATH problems/LONGEST-PATH/longest-path.cpp)
 
 add_executable(COMPLEMENT-TREE problems/COMPLEMENT-TREE/complement-tree.cpp)
 add_executable(COMBINE-SUM problems/COMBINE-SUM/combine-sum.cpp)
+add_executable(938B problems/938B/938B.cpp)
