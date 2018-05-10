@@ -1,4 +1,4 @@
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 add_executable(PLUS_MINUS problems/PLUS_MINUS/PLUS_MINUS.cpp)
 
 add_executable(B-TREE problems/B-TREE/b-tree.cpp)
@@ -37,3 +37,4 @@ add_executable(888C problems/888C/888C.cpp)
 add_executable(903A problems/903A/903A.cpp)
 add_executable(67A problems/67A/67A.cpp)
 add_executable(SUM_TO_13 problems/SUM_TO_13/SUM_TO_13.cpp)
+add_executable(DIJKSTRA-SHORT problems/DIJKSTRASHORTREACH/dijkstrashortreach.cpp)
