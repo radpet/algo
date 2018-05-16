@@ -1,3 +1,4 @@
+cmake_minimum_required(VERSION 3.5)
 set(CMAKE_CXX_STANDARD 14)
 add_executable(PLUS_MINUS problems/PLUS_MINUS/PLUS_MINUS.cpp)
 
@@ -40,3 +41,8 @@ add_executable(SUM_TO_13 problems/SUM_TO_13/SUM_TO_13.cpp)
 add_executable(DIJKSTRA-SHORT problems/DIJKSTRASHORTREACH/dijkstrashortreach.cpp)
 add_executable(ACODE problems/ACODE/acode.cpp)
 add_executable(KNAPSACK problems/KNAPSACK/knapsack.cpp)
+add_executable(lcs0 problems/LCS0/lcs0.cpp)
+add_executable(squares problems/SQUARES/squares.cpp)
+add_executable(trucks problems/TRUCKS/trucks.cpp)
+add_executable(dp_student problems/DP_STUDENT/dp_student.cpp)
+add_executable(IOIPALIN problems/IOIPALIN/IOIPALIN.cpp)
