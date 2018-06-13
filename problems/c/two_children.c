@@ -17,7 +17,7 @@ main(int argc, char* argv[]){
           waitpid(pid2, &status2,0);
           break;
         }
-        waitpid(pid,&status2, 1);
+        waitpid(pid2,&status2, 1);
         if(status2 !=-1){
          printf("child 2 exited first with pid=%d\n", pid2);
          waitpid(pid, &status1, 0);
