@@ -1,4 +1,6 @@
 #include<stdio.h>
+#include<sys/types.h>
+#include<sys/wait.h>
 
 
 main(int argc, char* argv[]){
@@ -6,32 +8,27 @@ main(int argc, char* argv[]){
   int pid = fork();
 
   if(pid){
+    printf("spawned 1 pid=%d\n",pid);
     int pid2 = fork();
     if(pid2){
-      int status1;
-      int status2;
-      while(1){
-        waitpid(pid,&status1, 1);
-        if(status1 !=-1){
-          printf("child 1 exited first with pid=%d\n", pid);
-          waitpid(pid2, &status2,0);
-          break;
-        }
-        waitpid(pid2,&status2, 1);
-        if(status2 !=-1){
-         printf("child 2 exited first with pid=%d\n", pid2);
-         waitpid(pid, &status1, 0);
-         break;
-        }
+      printf("spawned 2 pid=%d\n", pid2);
+      int status;
+      int fp = wait(&status);
+      if(status !=0){
+        fp = wait(&status);
+        if(status == 0) printf("%d exited successfully\n", fp);
+        else return -1;
+      }else{
+        printf("%d exited successfully\n", fp);
+        wait(NULL);
       }
-      waitpid(pid,0);
-      wait(pid2,0);
     }
      else{
        execlp(argv[2], argv[2], (char*) NULL);
        return -1;
      }
   }else{
+       for(int i=0;i<100000;i++);
        execlp(argv[1], argv[1], (char*) NULL);
        return -1;
   }
