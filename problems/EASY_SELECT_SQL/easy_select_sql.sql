@@ -16,3 +16,7 @@ select ship,battle,result from ships.OUTCOMES where result="sunk";
 select name from ships.SHIPS where name=class;
 select name from ships.SHIPS where name like "R%";
 select name from ships.SHIPS  where name like "% %" and name not like "% % %";
+
+select starname from movies.STARSIN where movies.STARSIN.MOVIETITLE="Terms of Endearment";
+select starname from movies.STARSIN where  movies.STARSIN.MOVIETITLE= (select title from movies.MOVIE where movies.MOVIE.STUDIONAME='MGM' and movies.MOVIE.YEAR=1995);
+select starname from movies.STARSIN join movies.MOVIE on movies.STARSIN.MOVIETITLE=movies.MOVIE.TITLE where movies.MOVIE.STUDIONAME='MGM' and movies.MOVIE.YEAR=1995
