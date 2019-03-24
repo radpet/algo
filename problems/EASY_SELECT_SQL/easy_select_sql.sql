@@ -9,3 +9,10 @@ select model, ram, screen from pc.laptop where price > 1000;
 select model from pc.printer where color="y";
 select model, speed, hd from pc.pc where (cd="12x" or cd="16x") and price<2000;
 select code, model, speed+ram+10*screen as r from pc.laptop order by r
+
+select class, country from ships.CLASSES where numguns < 10;
+select name as shipName from ships.SHIPS where launched < 1918;
+select ship,battle,result from ships.OUTCOMES where result="sunk";
+select name from ships.SHIPS where name=class;
+select name from ships.SHIPS where name like "R%";
+select name from ships.SHIPS  where name like "% %" and name not like "% % %";
