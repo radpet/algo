@@ -20,3 +20,12 @@ select name from ships.SHIPS  where name like "% %" and name not like "% % %";
 select starname from movies.STARSIN where movies.STARSIN.MOVIETITLE="Terms of Endearment";
 select starname from movies.STARSIN where  movies.STARSIN.MOVIETITLE= (select title from movies.MOVIE where movies.MOVIE.STUDIONAME='MGM' and movies.MOVIE.YEAR=1995);
 select starname from movies.STARSIN join movies.MOVIE on movies.STARSIN.MOVIETITLE=movies.MOVIE.TITLE where movies.MOVIE.STUDIONAME='MGM' and movies.MOVIE.YEAR=1995
+
+
+select distinct MOVIE.TITLE, MOVIE.YEAR from MOVIE join STARSIN on MOVIE.TITLE=STARSIN.MOVIETITLE where MOVIE.YEAR < 1982 and not ( STARSIN.STARNAME like "%b%" or STARSIN.STARNAME like "%k%") order by MOVIE.YEAR;
+
+select MOVIE.TITLE, MOVIE.LENGTH/60 from MOVIE where
+ MOVIE.YEAR= (select MOVIE.YEAR from MOVIE where MOVIE.TITLE = "Terms of Endearment")
+ and (  MOVIE.LENGTH <  (select MOVIE.LENGTH from MOVIE where MOVIE.TITLE = "Terms of Endearment") or MOVIE.LENGTH IS NULL);
+
+select t.n, t.cnt from (select STARSIN.STARNAME as n , count(STARSIN.MOVIETITLE) as cnt  from STARSIN join MOVIE on STARSIN.MOVIETITLE=MOVIE.TITLE where MOVIE.YEAR > 1990 group by STARSIN.STARNAME) as t where t.cnt > 3;
