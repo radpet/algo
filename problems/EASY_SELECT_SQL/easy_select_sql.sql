@@ -29,3 +29,7 @@ select MOVIE.TITLE, MOVIE.LENGTH/60 from MOVIE where
  and (  MOVIE.LENGTH <  (select MOVIE.LENGTH from MOVIE where MOVIE.TITLE = "Terms of Endearment") or MOVIE.LENGTH IS NULL);
 
 select t.n, t.cnt from (select STARSIN.STARNAME as n , count(STARSIN.MOVIETITLE) as cnt  from STARSIN join MOVIE on STARSIN.MOVIETITLE=MOVIE.TITLE where MOVIE.YEAR > 1990 group by STARSIN.STARNAME) as t where t.cnt > 3;
+
+select t.NAME, sum(t.res) as total_dmg from
+(select *,IF( OUTCOMES.BATTLE IS NULL OR OUTCOMES.RESULT = 'ok', 0, count(*)) as res from SHIPS left join OUTCOMES on SHIPS.NAME=OUTCOMES.SHIP group by OUTCOMES.SHIP, OUTCOMES.RESULT
+) as t group by t.NAME order by total_dmg desc;
