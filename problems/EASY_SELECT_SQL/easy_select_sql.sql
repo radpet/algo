@@ -33,3 +33,10 @@ select t.n, t.cnt from (select STARSIN.STARNAME as n , count(STARSIN.MOVIETITLE)
 select t.NAME, sum(t.res) as total_dmg from
 (select *,IF( OUTCOMES.BATTLE IS NULL OR OUTCOMES.RESULT = 'ok', 0, count(*)) as res from SHIPS left join OUTCOMES on SHIPS.NAME=OUTCOMES.SHIP group by OUTCOMES.SHIP, OUTCOMES.RESULT
 ) as t group by t.NAME order by total_dmg desc;
+
+select t.NAME, t.cnt from (select SHIPS.NAME, count(SHIPS.CLASS) as cnt from ships.SHIPS group by SHIPS.CLASS) as t where t.cnt > 3 and t.NAME in
+(select OUTCOMES.SHIP from ships.OUTCOMES where OUTCOMES.RESULT='ok');
+
+select t2.NAME, count(*) from ships.OUTCOMES join
+(select t.NAME, t.cnt from (select SHIPS.NAME, count(SHIPS.CLASS) as cnt from ships.SHIPS group by SHIPS.CLASS) as t where t.cnt > 3) as t2
+on OUTCOMES.SHIP=t2.NAME  where OUTCOMES.RESULT='ok' ;
