@@ -40,3 +40,29 @@ select t.NAME, t.cnt from (select SHIPS.NAME, count(SHIPS.CLASS) as cnt from shi
 select t2.NAME, count(*) from ships.OUTCOMES join
 (select t.NAME, t.cnt from (select SHIPS.NAME, count(SHIPS.CLASS) as cnt from ships.SHIPS group by SHIPS.CLASS) as t where t.cnt > 3) as t2
 on OUTCOMES.SHIP=t2.NAME  where OUTCOMES.RESULT='ok' ;
+
+
+
+select avg(t.num_country_per_battle) from (
+	select BATTLE, COUNTRY, count(*) as num_country_per_battle from ships.OUTCOMES
+	join ships.SHIPS as SHIPS on OUTCOMES.SHIP=SHIPS.NAME
+	join ships.CLASSES as CLASSES on SHIPS.CLASS=CLASSES.CLASS
+	group by OUTCOMES.BATTLE, CLASSES.COUNTRY
+) as t group by t.BATTLE
+
+select
+	country,
+	count(distinct SHIPS.NAME) as cnt_ships,
+    count(distinct OUTCOMES.BATTLE) as cnt_battles,
+    count(distinct OUTCOMES_SUNK.BATTLE) as cnt_battles_sunk
+ from CLASSES
+left join SHIPS as SHIPS on CLASSES.CLASS=SHIPS.CLASS
+left join OUTCOMES as OUTCOMES on SHIPS.NAME=OUTCOMES.SHIP
+left join OUTCOMES as OUTCOMES_SUNK on SHIPS.NAME=OUTCOMES.SHIP and OUTCOMES.RESULT='sunk'
+group by CLASSES.COUNTRY
+
+select distinct(BATTLES.NAME) from BATTLES
+  join OUTCOMES as OUTCOMES on BATTLES.NAME=OUTCOMES.BATTLE
+  join SHIPS as SHIPS on OUTCOMES.SHIP=SHIPS.NAME
+  join CLASSES as CLASSES on SHIPS.CLASS=CLASSES.CLASS
+where CLASSES.COUNTRY='Japan' and OUTCOMES.RESULT!='ok'
