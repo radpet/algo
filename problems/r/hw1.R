@@ -39,14 +39,14 @@ qgamma(0.75,shape=2,rate=0.5)
 f = function( k, T, n ){
   good=0
   for(i in 1:n) {
-    x = floor(runif(3, 1,T))
+    x = sample(seq(1,T,1),3)
     s = x[1] + 2*x[2]+3*x[3]
     if(s==k) good = good+1
   }
   return(good/n)
 }
-T = floor(runif(1,1,10))
-k = floor(runif(1,10,30))
+T = sample(seq(1,10,1),1)
+k = sample(seq(10,30,1),1)
 f(k,T,10000)
 
 
