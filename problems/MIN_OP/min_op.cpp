@@ -7,10 +7,10 @@ long minRules(int k, long MEMO[]) {
         return MEMO[k];
     }
     if (k == 0) {
-        return 0;
+        return MEMO[k] = 0;
     }
     if (k == 1 || k == 2 || k == 3) {
-        return 1;
+        return MEMO[k] = 1;
     }
 
 
@@ -29,17 +29,17 @@ long minRules(int k, long MEMO[]) {
 }
 
 long solve(int N) {
-    long *MEMO = new long[N + 1];
-    for (int i = 0; i < N + 1; i++) {
+    long *MEMO = new long[max(4, N) + 1];
+    for (int i = 0; i <= N; i++) {
         MEMO[i] = -1;
     }
     long result = minRules(N, MEMO);
-    delete MEMO;
+    delete[] MEMO;
     return result;
 }
 
 long solveIterative(int N) {
-    int dp[N];
+    long *dp = new long[max(4, N) + 1];
     dp[0] = 0;
     dp[1] = 1;
     dp[2] = 1;
@@ -64,12 +64,16 @@ long solveIterative(int N) {
         dp[i] = min(min(minusOne, even), three) + 1;
     }
 
-    return dp[N];
+    long result = dp[N];
+    delete[] dp;
+    return result;
 }
 
 int main() {
 
-    int testCases[] = {1, 5, 6, 7, 22, 33, 45, 99, 110, 115, 226, 2690, 4470, 50000, 99999, 100001};
+    int testCases[] = {1, 5, 6, 7, 22, 33, 45, 99, 542, 123, 121, 0,
+                       110, 115, 226, 2690, 4470, 6809, 7777,
+                       50000, 99999};
     for (int testCase : testCases) {
         long recursive = solve(testCase);
         long iterative = solveIterative(testCase);
@@ -77,6 +81,9 @@ int main() {
             cout << "!!!ERROR!!! " << "N=" << testCase << " recursive=" << recursive << " vs iterative=" << iterative
                  << endl;
             return 1;
+        } else {
+            cout << "N=" << testCase << " recursive=" << recursive << " vs iterative=" << iterative
+                 << endl;
         }
     }
 
