@@ -126,11 +126,11 @@ struct State{
 
     bool has(Board& b){
         for(int i=0;i<path.size();i++){
-            if(path[i] != b){
-                return false;
+            if(path[i] == b){
+                return true;
             }
         }
-        return true;
+        return false;
     }
 
     Board lastBoard(){
