@@ -139,7 +139,7 @@ void solve(Board& board, Cell& start, Cell& finish){
             // cout<<"Moving to: "<<currentCell.coord.first+r<<" "<<currentCell.coord.second +c<<endl;
             // cout<<"Current cell: "<<currentCell.coord.first<<" "<<currentCell.coord.second<<endl;
             Cell newCell = Cell(currentCell.coord.first + r, currentCell.coord.second +c);
-            if(board.isInside(newCell) && !board.isWall(newCell)){
+            if(board.isInside(newCell) && !board.isWall(newCell) && !used[newCell.coord.first][newCell.coord.second]){
                 //cout<<"Pushing New Cell in the board:" << newCell.coord.first<<" "<<newCell.coord.second<<endl;
                 Q.push(current.nextState(newCell));                
             }
