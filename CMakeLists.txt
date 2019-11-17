@@ -54,3 +54,4 @@ add_executable(discrete_random_var problems/DISCRETE_RANDOM_VAR/discrete_random_
 add_executable(sliding problems/SLIDING/sliding.cpp)
 add_executable(sliding-a-star problems/SLIDING-A-STAR/sliding-a-star.cpp)
 add_executable(GEN_BUY problems/GEN_BUY/GEN_BUY.cpp)
+add_executable(TIC_TOE_MIN_MAX problems/TIC_TOE_MIN_MAX/TIC_TOE_MIN_MAX.cpp)

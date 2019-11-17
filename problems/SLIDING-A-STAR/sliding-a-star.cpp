@@ -124,11 +124,11 @@ struct State{
         return s;
     }
 
-    State pop(){
-        State s = State(path, graphDist-1);
-        s.path.pop_back();
-        return s;
-    }
+    // State pop(){
+    //     State s = State(path, graphDist-1);
+    //     s.path.pop_back();
+    //     return s;
+    // }
     
     // can be optimized significantly
     bool has(Board& b){
