@@ -1,4 +1,3 @@
-// https://en.wikipedia.org/wiki/Iterative_deepening_A*
 #include<iostream>
 #include<vector>
 #include<math.h>
