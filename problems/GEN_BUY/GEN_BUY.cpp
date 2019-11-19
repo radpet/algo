@@ -73,8 +73,7 @@ struct Solution{
         Solution newSolution = Solution(items);
 
         for(int i=0;i<items.size();i++){
-            bool p = false;
-            // bool p = genRand(); //TODO IMPL
+            int p = binaryRandom.randInt();
             newSolution.used[i] = p? used[i] : other.used[i];
         }
 
