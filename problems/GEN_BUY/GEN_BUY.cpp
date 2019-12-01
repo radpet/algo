@@ -4,7 +4,7 @@
  #include<random>
  using namespace std;
 
-int MAX_COST = 3000;
+int MAX_COST = 5000;
 
 struct Random{
     default_random_engine generator;
@@ -139,7 +139,7 @@ struct Solver{
     vector<Item> items;
     vector<Solution> solutions;
 
-    Solver(vector<Item>_items): items(_items), iter(5000), populationSize(100), selectionSize(10){
+    Solver(vector<Item>_items): items(_items), iter(1000), populationSize(100), selectionSize(20){
 
     }
 
