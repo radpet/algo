@@ -25,7 +25,6 @@ SEX = 'sex'
 # p(Ck | x) ~ p(Ck)Product( p(xi | Ck) ) - continuous gaussian density
 def n_b(V, X, y):
     n_classes = np.unique(y)
-    print(V)
 
     stats = {}
     for claz in n_classes:
@@ -63,7 +62,7 @@ def run():
     # print(y)
 
     test = load_test()
-    # print(test)
+
     labels, probs = n_b(test, X, y)
 
     print(labels, probs)
@@ -72,4 +71,10 @@ def run():
 
 
 if __name__ == '__main__':
+    import time
+
+    start = time.time()
     run()
+    end = time.time()
+    print( (end - start) )
+
